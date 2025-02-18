@@ -10,7 +10,7 @@ class Deck:
         self.suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
         self.ranks = {
             "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
-            "Jack": 10, "Queen": 10, "King": 10, "Ace": 10  # Aces are handled separately in game logic
+            "Jack": 10, "Queen": 10, "King": 10, "Ace": 10  
         }
 
         
@@ -48,6 +48,7 @@ class Dealer:
         self.total = 0
         for card in self.hand:
             self.total += card['value']   
+        return self.total
 
 class Player:
     def __init__(self):
@@ -66,15 +67,75 @@ class Player:
     def update_total(self):
         self.total = 0
         for card in self.hand:
-            self.total += card['value']        
+            self.total += card['value']  
+        return self.total      
             
-
+def blackjack():
+    deck = Deck()
+    dealer = Dealer()
+    player = Player()
+    game = True
+    
+    while game == True:
+        # each player draws two cards
+        for i in range(2):
+            dealer.dealer_draw(deck)
+            player.player_draw(deck)
         
 
+
+        #print inital hands
+        print(f"Dealer's Hand: {dealer.hand[0]}, Total: ?")
+        print(f"Player's Hand: {player.hand}, Total: {player.update_total()}")
+
+
+        # if players cards are less than 21 play
+        while player.get_total() < 21:
+            action = input("Would you like to [H]it or [S]tand?")
+            if action == 'h':
+                player.player_draw(deck)
+                player.update_total()
+                print(f"Player's Hand: {player.hand}, Total: {player.update_total()}")
+            elif action == 's':
+                break
+            else:
+                print("Invalid action. Please choose 'H' for Hit or 'S' for Stand.")
+
+            
+        #If players hand is > 21 bust
+        if player.get_total() > 21:
+            print("The player busts! Dealer wins!")
+            
+        print("Dealer's Hand:", dealer.hand, "Total:", dealer.get_total())
+        while dealer.get_total() < 17:
+            print("Dealer hits.....")
+            dealer.dealer_draw(deck)
+            print("Dealer's Hand:", dealer.hand, "Total:", dealer.update_total())
+
+            # Determine winner
+        if dealer.get_total() > 21:
+            print("Dealer busts! Player wins.")
+        elif player.get_total() > dealer.get_total():
+            print("Player wins!")
+        elif player.get_total() < dealer.get_total():
+            print("Dealer wins!")
+        else:
+            print("It's a tie!")
+
+        decision = input("Would you like to play again?! Y or N")
+        if decision == 'n':
+            exit()
+        elif decision == 'y':
+            blackjack()
+        else:
+            print("Invalid action. Please choose 'y' or 'n.")
+
+blackjack()
 
 
 
 # Testing the functionality
+'''
 deck = Deck()  # Create a deck instance
 dealer = Dealer()  # Create a dealer instance
 player = Player()
@@ -87,5 +148,5 @@ player.update_total()
 print("Dealer's hand after drawing:", dealer.hand)
 print("Player's hand after drawing:", player.hand)
 print("Player's Total: ", player.total)
-
+'''
 
